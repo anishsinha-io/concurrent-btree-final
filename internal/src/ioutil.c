@@ -35,7 +35,7 @@ i32 format_table(const char *table_name, size_t rec_size) {
     else truncate(table_path, 0);
     struct table_header new_table_header;
     new_table_header.rec_size       = rec_size;
-    new_table_header.num_records    = 0;
+    new_table_header.rec_ct         = 0;
     new_table_header.current_max_id = 0;
     strncpy((char *) new_table_header.table_name, table_name, sizeof(((struct table_header *) 0)->table_name));
     pwrite(fd, &new_table_header, sizeof(struct table_header), 0);
@@ -55,5 +55,67 @@ i32 read_table_header(const char *table_name, struct table_header *header) {
     if ((fd = open(path, O_RDONLY)) < 0) return EBADF;
     pread(fd, header, sizeof(struct table_header), 0);
     close(fd);
+    return 0;
+}
+
+/*
+ * this function creates a new record out of the buffer (rec) provided and appends it to the end of the database table
+ * file passed in. returns EINVAL or EBADF on error, and 0 on success
+ */
+i32 write_record(const char *table_name, const void *rec) {
+    i32 status;
+    if (!table_name || !rec) return EINVAL;
+    struct table_header header;
+    status = read_table_header(table_name, &header);
+    if (status != 0) return status;
+    const char *path = build_table_path(table_name);
+    i32        fd    = open(path, O_RDWR);
+    if (fd < 0) return EBADF;
+    off_t offset = (off_t) (header.rec_ct * header.rec_size + sizeof(header));
+    pwrite(fd, rec, header.rec_size, offset);
+    close(fd);
+    return 0;
+}
+
+/*
+ * this function reads a database table record into the buffer provided, given that the arguments are valid
+ */
+i32 read_record(const char *table_name, u64 loc, void *buf) {
+    i32 status;
+    if (!table_name || !buf || loc < 0) return EINVAL;
+    const char          *path = build_table_path(table_name);
+    struct table_header header;
+    status = read_table_header(table_name, &header);
+    if (status != 0) return status;
+    if (loc > header.rec_ct) return EINVAL;
+    i32 fd = open(path, O_RDONLY);
+    if (fd < 0) return EBADF;
+    off_t offset = ((off_t) header.rec_size * (off_t) loc + (off_t) sizeof(header));
+    pread(fd, (void *) buf, header.rec_size, offset);
+    close(fd);
+    return 0;
+}
+
+/*
+ * this function formats the index corresponding to the given table name passed in. a table may or may not have an
+ * index, but an index must have a corresponding table, so if that table does not exist, the function will return an
+ * error status code.
+ */
+i32 format_index(const char *table_name) {
+    i32 status;
+    if (!table_name) return EINVAL;
+    struct table_header header;
+    status = read_table_header(table_name, &header);
+    if (status != 0) return status;
+    const char *index_path = build_index_path(table_name);
+    i32        fd          = open(index_path, O_WRONLY);
+    if (fd < 0 && errno == ENOENT) fd = open(index_path, O_CREAT | O_EXCL | O_WRONLY);
+    struct index_header header_index;
+    strncpy((char *) &header_index.table_name, table_name, sizeof(((struct IndexHeader *) 0)->table_name));
+    header_index.root_loc = -1;
+    header_index.height   = -1;
+    header_index.node_ct  = 0;
+    header_index.order = ORDER;
+    pwrite(fd, &header_index, sizeof(header_index), 0);
     return 0;
 }

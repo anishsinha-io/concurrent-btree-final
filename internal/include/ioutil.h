@@ -10,14 +10,13 @@
 
 #include "errors.h"
 
-#define TABLE_PATH "/Users/anishsinha/Home/scratch/lock-table-final/test_database/"
-#define INDEX_PATH "/Users/anishsinha/Home/scratch/lock-table-final/test_database/"
+#define TABLE_PATH "/Users/anishsinha/Home/scratch/internal-final/test_database/"
+#define INDEX_PATH "/Users/anishsinha/Home/scratch/internal-final/test_database/"
 
-#define PAGE_SIZE 1000
 
 struct table_header {
     const char table_name[50];
-    u64        num_records, current_max_id;
+    u64        rec_ct, current_max_id;
     size_t     rec_size;
 };
 
@@ -26,6 +25,9 @@ struct table_header {
 struct index_header {
     const char index_name[56];
     const char table_name[50];
+    i64        root_loc, height;
+    u64        node_ct;
+    u64        order;
 };
 
 i32 format_table(const char *table_name, size_t rec_size);

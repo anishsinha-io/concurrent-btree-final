@@ -8,7 +8,6 @@
 #include "errors.h"
 
 // hash function signature
-typedef u64 (*hashfunc)(const void *, u64);
 
 // hash table struct
 struct hashtable {

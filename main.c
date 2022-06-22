@@ -3,6 +3,7 @@
 
 #include "errors.h"
 #include "ioutil.h"
+#include "table.h"
 
 struct song {
     i32  size;

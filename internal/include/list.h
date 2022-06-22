@@ -10,9 +10,6 @@
 #include "errors.h"
 
 
-typedef void(*printfunc)(const void *);
-typedef bool(*cmpfunc)(const void *, const void *);
-
 struct node {
     const void  *data;
     struct node *prev, *next;
