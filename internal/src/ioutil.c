@@ -1,3 +1,20 @@
+/*
+** June 17, 2022
+**
+** The author disclaims copyright to this source code.  In place of
+** a legal notice, here is a blessing:
+**
+**    May you do good and not evil.
+**    May you find forgiveness for yourself and forgive others.
+**    May you share freely, never taking more than you give.
+**
+***********************************************************************************************************************
+**
+** This file is part of the `ioutil` module. This part of the module contains implementations of functions used for
+** interacting with the file system, resolving paths, creating and formatting disk files, and reading data from the
+** disk meaningfully into memory buffers.
+*/
+
 #include "ioutil.h"
 
 /*
@@ -111,7 +128,7 @@ i32 format_index(const char *table_name) {
     i32        fd          = open(index_path, O_WRONLY);
     if (fd < 0 && errno == ENOENT) fd = open(index_path, O_CREAT | O_EXCL | O_WRONLY);
     struct index_header header_index;
-    strncpy((char *) &header_index.table_name, table_name, sizeof(((struct IndexHeader *) 0)->table_name));
+    strncpy((char *) &header_index.table_name, table_name, sizeof(((struct index_header *) 0)->table_name));
     header_index.root_loc = -1;
     header_index.height   = -1;
     header_index.node_ct  = 0;

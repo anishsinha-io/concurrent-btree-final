@@ -1,3 +1,23 @@
+/*
+** June 17, 2022
+**
+** The author disclaims copyright to this source code.  In place of
+** a legal notice, here is a blessing:
+**
+**    May you do good and not evil.
+**    May you find forgiveness for yourself and forgive others.
+**    May you share freely, never taking more than you give.
+**
+***********************************************************************************************************************
+**
+** This file is part of the `table` module. This file contains implementations of functions used to create, manipulate,
+** and utilize hash table objects. The hash table implementation here uses the division method of hashing as discussed
+** in Cormen, Leiserson, Rivest, and Stein's `Algorithms`. These hash tables also rely on separate chaining to handle
+** collisions and use prime numbers as the sizes of the tables, which are acquired by using the `primesieve` library.
+** Hash table objects necessary because the lock table which stores database object latches and file/page locks is one.
+**
+*/
+
 #include <primesieve.h>
 
 #include "list.h"

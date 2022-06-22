@@ -1,3 +1,23 @@
+/*
+** June 17, 2022
+**
+** The author disclaims copyright to this source code.  In place of
+** a legal notice, here is a blessing:
+**
+**    May you do good and not evil.
+**    May you find forgiveness for yourself and forgive others.
+**    May you share freely, never taking more than you give.
+**
+***********************************************************************************************************************
+**
+** This file is part of the `slice` module. This part of the module contains implementations of functions used for
+** creating, manipulating, and utilizing dynamic slice objects. Slice objects are meant to be a more convenient way to
+** work with C arrays, which are, in general, limited in their use. Slices implemented here are fully featured,
+** java.lang.ArrayList or std::vector type structures, fully capable of dynamically resizing themselves. They may be
+** searched through, sorted efficiently, and inserted into at any point with simple function calls.
+**
+*/
+
 #include "slice.h"
 
 struct slice_key_index *slice_key_index(void *key, u64 index) {

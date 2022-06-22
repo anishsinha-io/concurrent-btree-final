@@ -1,3 +1,21 @@
+/*
+** June 17, 2022
+**
+** The author disclaims copyright to this source code.  In place of
+** a legal notice, here is a blessing:
+**
+**    May you do good and not evil.
+**    May you find forgiveness for yourself and forgive others.
+**    May you share freely, never taking more than you give.
+**
+***********************************************************************************************************************
+**
+** This file is part of the `list` module. This file contains implementations of functions used for creating and
+** manipulating linked list objects, which are necessary and useful in this project's implementation of the hash table.
+** More specifically, the linked list objects here are used to implement separate chaining.
+**
+*/
+
 #include "list.h"
 #include "errors.h"
 
