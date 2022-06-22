@@ -42,5 +42,7 @@ struct index_node {
     struct node_entry entries[ORDER];
 };
 
+struct index_node *index_node();
+
 
 #endif

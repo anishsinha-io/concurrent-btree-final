@@ -27,7 +27,7 @@
 
 #define INITIAL_SLICE_CAPACITY 10
 
-typedef i8(*slice_cmpfunc)(const void *, const void *);
+typedef i32(*slice_cmpfunc)(const void *, const void *);
 
 struct slice {
     u64           length, capacity;
@@ -41,5 +41,6 @@ struct slice_key_index {
     u64  index;
 };
 
+struct slice *slice(slice_cmpfunc compare, printfunc print);
 
 #endif

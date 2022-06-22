@@ -48,11 +48,13 @@ static void slice_autoresize(struct slice *s) {
 }
 
 
-struct slice *slice() {
+struct slice *slice(slice_cmpfunc compare, printfunc print) {
     struct slice *s = malloc(sizeof(struct slice));
     s->length   = 0;
     s->capacity = INITIAL_SLICE_CAPACITY;
     s->keys     = malloc(sizeof(void *) * s->capacity);
+    s->compare  = compare;
+    s->print    = print;
     return s;
 }
 
@@ -65,15 +67,16 @@ void delete_slice(struct slice *s) {
     free(s);
 }
 
-struct slice *make_slice(void *keys, u64 capacity, size_t size) {
-    struct slice *s = slice();
-    for (int     i  = 0; i < capacity; i++) s->keys[i] = keys + size * i;
+struct slice *make_slice(void *keys, u64 capacity, size_t size, slice_cmpfunc compare, printfunc print) {
+    struct slice *s = slice(compare, print);
+    slice_resize(s, (u64) ((double) capacity * 1.5));
+    for (int i = 0; i < s->capacity; i++) s->keys[i] = keys + size * i;
     s->length = capacity;
     return s;
 }
 
 struct slice *subslice(struct slice *s, u64 start, u64 end) {
-    struct slice *ss = slice();
+    struct slice *ss = slice(s->compare, s->print);
     slice_resize(ss, end - start);
     memcpy(ss->keys, &(s->keys[start]), sizeof(void *) * (end - start));
     ss->length = end - start;
@@ -208,11 +211,15 @@ static void merge(struct slice *s, struct slice *l, struct slice *r) {
 void csort(struct slice *s, int(*cmpfunc)(const void *, const void *)) {
     if (s->length < 44) return insertion_sort(s);
     unsigned int mid = s->length / 2;
-    struct slice *l  = slice(mid);
-    struct slice *r  = slice(s->length - mid);
+    struct slice *l  = slice(s->compare, s->print);
+    struct slice *r  = slice(s->compare, s->print);
     slice_fill(l, s->keys, mid);
     slice_fill(r, &(s->keys[mid]), s->length - mid);
     csort(l, cmpfunc);
     csort(r, cmpfunc);
     merge(s, l, r);
 }
+
+// void **slice_to_array(struct slice *s, void **array) {
+//
+// }
