@@ -21,7 +21,7 @@
 #include <stdbool.h>
 
 #define PAGE_SIZE 1000
-#define ORDER 2;
+#define ORDER 2
 
 typedef unsigned char          u8;
 typedef unsigned short         u16;

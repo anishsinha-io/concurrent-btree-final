@@ -18,6 +18,10 @@
 #ifndef __LEHMAN_YAO
 #define __LEHMAN_YAO
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "slice.h"
 #include "errors.h"
 
 /*
@@ -42,7 +46,23 @@ struct index_node {
     struct node_entry entries[ORDER];
 };
 
-struct index_node *index_node();
+struct index_node_pair {
+    struct index_node *first, second;
+    void              *promoted_key;
+};
+
+struct index_loc {
+    void *key;
+    u64  index;
+};
+
+struct index_exact_loc {
+    struct index_node *node;
+    struct index_loc  *loc;
+};
+
+struct index_node *index_node(bool leaf);
+struct node_entry *node_entry(u64 primary_key, u64 loc);
 
 
 #endif

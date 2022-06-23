@@ -36,11 +36,6 @@ struct slice {
     printfunc     print;
 };
 
-struct slice_key_index {
-    void *key;
-    u64  index;
-};
-
 struct slice *slice(slice_cmpfunc compare, printfunc print);
 struct slice *subslice(struct slice *s, u64 start, u64 end);
 void slice_insert_front(struct slice *s, void *key);

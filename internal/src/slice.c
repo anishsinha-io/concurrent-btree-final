@@ -20,21 +20,6 @@
 
 #include "slice.h"
 
-struct slice_key_index *slice_key_index(void *key, u64 index) {
-    struct slice_key_index *ski = malloc(sizeof(struct slice_key_index));
-    ski->key   = key;
-    ski->index = index;
-    return ski;
-}
-
-u64 ski_index(struct slice_key_index *ski) {
-    return ski->index;
-}
-
-void *ski_key(struct slice_key_index *ski) {
-    return ski->key;
-}
-
 static void slice_resize(struct slice *s, u64 capacity) {
     if (capacity == s->length || capacity < 10) return;
     s->keys     = realloc(s->keys, sizeof(void *) * capacity);
