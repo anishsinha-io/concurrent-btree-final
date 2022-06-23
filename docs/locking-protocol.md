@@ -41,12 +41,17 @@ the index but not in the database and vice versa. All file states will be consis
 To search the database, the calling thread performs a standard B-Link tree search as described in Lehman and Yao's
 paper [2]. No locks are necessary to simply search the database, so that operation doesn't require any difficult action
 outside just performing the search. The result of the search will either be a pointer to a location on the database or
--1, which indicates "not found".
+-1, which indicates "not found". Once the search has returned, on the chance that a valid pointer was found, the thread
+will need to acquire a shared read lock on the database. To do this, it must first go through the lock table.
 
 ##### Lemma 1.01: No thread can acquire a lock without first registering it with the lock table
 
 When a thread performs a search of the database, it must acquire a mutex on the lock table first. The thread will block
 until the mutex is acquired. Until the mutex on the lock table is acquired, it will be unable to register a lock with
 the lock table because that is the defined behavior of pthreads mutexes as described in details in the POSIX standard.
-Upon successfully acquiring the lock, the thread will wake up and now has exclusive access to the lock table. 
+Upon successfully acquiring the lock, the thread will wake up and now has exclusive access to the lock table.
+
+Once the thread has exclusive access to the lock table, it needs to hash the name of the database file it wants "read"
+access to and obtain the index this corresponds to in the hash table. Once it does this, a transaction object is
+appended to the chain of that index.  
 

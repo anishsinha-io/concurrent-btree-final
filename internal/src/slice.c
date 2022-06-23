@@ -96,6 +96,7 @@ void slice_insert_back(struct slice *s, void *key) {
 }
 
 void *slice_delete_front(struct slice *s) {
+    if (s->length == 0) return NULL;
     void *key = s->keys[0];
     s->keys[0] = NULL;
     free(s->keys[0]);
@@ -106,6 +107,7 @@ void *slice_delete_front(struct slice *s) {
 }
 
 void *slice_delete_back(struct slice *s) {
+    if (s->length == 0) return NULL;
     void *key = s->keys[s->length - 1];
     s->keys[s->length - 1] = NULL;
     free(s->keys[s->length - 1]);
@@ -114,7 +116,7 @@ void *slice_delete_back(struct slice *s) {
     return key;
 }
 
-void slice_put_index(struct slice *s, void *key, u64 index) {
+void slice_insert_index(struct slice *s, void *key, u64 index) {
     if (index > s->length) return;
     if (index == s->length) return slice_insert_back(s, key);
     if (index == 0) return slice_insert_front(s, key);
@@ -124,8 +126,8 @@ void slice_put_index(struct slice *s, void *key, u64 index) {
     s->length++;
 }
 
-void *slice_remove_index(struct slice *s, u64 index) {
-    if (index >= s->length) return NULL;
+void *slice_delete_index(struct slice *s, u64 index) {
+    if (index >= s->length || s->length == 0) return NULL;
     void *key = s->keys[index];
     s->keys[index] = NULL;
     free(s->keys[index]);
@@ -144,7 +146,7 @@ void *slice_get_index(struct slice *s, u64 index) {
     return s->keys[index];
 }
 
-void slice_fill(struct slice *s, void **keys, u64 num_keys) {
+void slice_from_array(struct slice *s, void **keys, u64 num_keys) {
     memcpy(s->keys, keys, sizeof(void *) * num_keys);
     s->length = num_keys;
 }
@@ -156,20 +158,20 @@ void slice_join(struct slice *s1, struct slice *s2) {
     delete_slice(s2);
 }
 
-
-struct slice_key_index *slice_find_index(const struct slice *s, const void *key) {
+u64 slice_find_index(const struct slice *s, const void *key) {
     u64 start = 0, end = s->length - 1;
     while (start <= end) {
         u64 mid = (start + end) / 2;
-        if (s->compare(s->keys[mid], key) == 0) return slice_key_index(s->keys[mid], mid);
+        if (s->compare(s->keys[mid], key) == 0) return mid;
         if (s->compare(s->keys[mid], key) < 0) start = mid + 1;
         else end = mid - 1;
     }
-    return slice_key_index(NULL, end + 1);
+    return end + 1;
 }
 
 void slice_print(struct slice *s) {
-    for (int i = 0; i < s->length; i++) s->print(s->keys[i]);
+    if (!s || !s->keys) return;
+    for (int i = 0; i < s->length; i++) if (s->keys[i] != NULL) s->print(s->keys[i]);
     printf("\n");
 }
 
@@ -208,18 +210,16 @@ static void merge(struct slice *s, struct slice *l, struct slice *r) {
     }
 }
 
-void csort(struct slice *s, int(*cmpfunc)(const void *, const void *)) {
+void slice_sort(struct slice *s) {
     if (s->length < 44) return insertion_sort(s);
     unsigned int mid = s->length / 2;
-    struct slice *l  = slice(s->compare, s->print);
-    struct slice *r  = slice(s->compare, s->print);
-    slice_fill(l, s->keys, mid);
-    slice_fill(r, &(s->keys[mid]), s->length - mid);
-    csort(l, cmpfunc);
-    csort(r, cmpfunc);
+    struct slice *l  = subslice(s, 0, mid);
+    struct slice *r  = subslice(s, mid, s->length);
+    slice_sort(l);
+    slice_sort(r);
     merge(s, l, r);
 }
 
-// void **slice_to_array(struct slice *s, void **array) {
-//
-// }
+void slice_to_array(struct slice *s, void **array, u64 array_length) {
+    memcpy(array, s->keys, sizeof(void *) * array_length);
+}

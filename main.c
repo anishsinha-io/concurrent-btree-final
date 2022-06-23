@@ -15,10 +15,5 @@ void print_string(const void *first) {
 }
 
 int main() {
-    const char   *a    = "apple";
-    const char   *b    = "book";
-    struct slice *test = slice(compare_string, print_string);
-    printf("%llu\n", test->length);
-    printf("%llu\n", test->capacity);
     return 0;
 }
