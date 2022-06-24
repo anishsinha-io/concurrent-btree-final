@@ -30,13 +30,6 @@ u64 hash_string(const void *str, u64 size) {
 }
 
 int main() {
-    struct hashtable *test    = hashtable(50, hash_string, compare_string, print_string);
-    hashtable_add(test, "xiang");
-    hashtable_add(test, "anish");
-    hashtable_add(test, "huang");
-    hashtable_print(test);
-    printf("%llu\n", test->capacity);
-    struct index_exact_loc loc;
-    struct slice           *s = slice(compare_string_slice, print_string);
+    struct slice *s = slice(compare_string_slice, print_string);
     return 0;
 }
