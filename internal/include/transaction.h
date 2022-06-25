@@ -43,6 +43,8 @@ struct transaction {
     enum operation operation;
 };
 
+u64 transaction_hash(const struct transaction *t1, u64 size);
+bool transaction_compare(const struct transaction *t1, const struct transaction *t2);
 void transaction_print(struct transaction *transaction);
 struct transaction *transaction(u64 page_no, enum lock_mode mode);
 

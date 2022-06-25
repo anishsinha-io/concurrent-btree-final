@@ -32,6 +32,10 @@ static void slice_autoresize(struct slice *s) {
     else slice_resize(s, ceil((double) s->capacity * 1.5));
 }
 
+__attribute__((nonnull))
+u64 slice_len(const struct slice *s) {
+    return s->length;
+}
 
 struct slice *slice(slice_cmpfunc compare, printfunc print) {
     struct slice *s = malloc(sizeof(struct slice));

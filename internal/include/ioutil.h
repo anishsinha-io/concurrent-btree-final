@@ -26,28 +26,36 @@
 #include <errno.h>
 
 #include "errors.h"
+#include "table.h"
 
 #define TABLE_PATH "/Users/anishsinha/Home/scratch/internal-final/test_database/"
 #define INDEX_PATH "/Users/anishsinha/Home/scratch/internal-final/test_database/"
 
+#define FRAME_COUNT 64
 
-struct table_header {
-    const char table_name[50];
-    u64        rec_ct, current_max_id;
-    size_t     rec_size;
+typedef void *(*allocator)(size_t size);
+
+struct frame {
+    u64  frame_no;
+    char buf[1000];
 };
 
-#define TABLE_NAME_SIZE sizeof(((struct table_header*)0)->table_name)
-
-struct index_header {
-    const char index_name[56];
-    const char table_name[50];
-    i64        root_loc, height;
-    u64        node_ct;
-    u64        order;
+struct page_meta {
+    u64    frame_no, page_no;
+    size_t frame_offset, page_offset;
+    u8     modified: 1;
 };
 
-i32 format_table(const char *table_name, size_t rec_size);
-i32 read_table_header(const char *table_name, struct table_header *header);
+struct buffer_pool {
+    u64              max_pages;
+    u64              free_pages;
+    cmpfunc          compare_page;
+    printfunc        print_page;
+    allocator        alloc_page;
+    struct hashtable *pool_map;
+    struct frame     frames[FRAME_COUNT];
+};
+
+struct buffer_pool *buffer_pool(allocator page_allocator);
 
 #endif

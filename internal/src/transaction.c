@@ -25,6 +25,13 @@ void transaction_print(struct transaction *transaction) {
     printf("\n}\n");
 }
 
+/*
+ * if t1 was created before t2, return true. otherwise, return false
+ */
+bool transaction_compare(const struct transaction *t1, const struct transaction *t2) {
+    return t1->transaction_id < t2->transaction_id;
+}
+
 struct transaction *transaction(u64 page_no, enum lock_mode mode) {
     struct transaction *transaction = malloc(sizeof(struct transaction));
     transaction->transaction_id = time(NULL);
@@ -32,4 +39,9 @@ struct transaction *transaction(u64 page_no, enum lock_mode mode) {
     transaction->mode           = mode;
     transaction->stat           = pending;
     return transaction;
+}
+
+u64 transaction_hash(const struct transaction *t1, u64 size) {
+    u64 aggregate = t1->transaction_id + t1->page_no + t1->operation + rand_r((unsigned int *) &t1->transaction_id);
+    return aggregate % size;
 }

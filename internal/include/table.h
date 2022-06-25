@@ -24,8 +24,6 @@
 #include "list.h"
 #include "errors.h"
 
-// hash function signature
-
 // hash table struct
 struct hashtable {
     u64             size, capacity;
