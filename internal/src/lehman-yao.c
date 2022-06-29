@@ -44,7 +44,7 @@ struct b_link_node *b_link_node(bool leaf, u64 min_order) {
 }
 
 static i32 insert_key_safe(struct b_link_node *node, struct node_entry *entry) {
-    
+
 }
 
 static i32 insert_key_unsafe(struct b_link_node *node, struct node_entry *entry) {
