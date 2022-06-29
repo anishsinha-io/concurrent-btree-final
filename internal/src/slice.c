@@ -135,9 +135,31 @@ void *slice_get_index(struct slice *s, u64 index) {
     return s->keys[index];
 }
 
-void slice_from_array(struct slice *s, void **keys, u64 num_keys) {
-    memcpy(s->keys, keys, sizeof(void *) * num_keys);
+// void slice_from_array(struct slice *s, void **keys, u64 num_keys) {
+//     slice_resize(s, (u64) ((double) num_keys * 1.5));
+//     memcpy(s->keys, keys, sizeof(void *) * num_keys);
+//     s->length = num_keys;
+// }
+
+struct slice *slice_from_array(slice_cmpfunc compare, printfunc print, void **keys, u64 num_keys) {
+    struct slice *s = slice(compare, print);
+    slice_resize(s, (u64) ((double) num_keys * 1.5));
+    memcpy(s->keys, keys, sizeof(void *));
     s->length = num_keys;
+    return s;
+}
+
+struct slice *
+slice_from_primitive_array(slice_cmpfunc compare, printfunc print, void *keys, u64 num_keys, size_t key_size) {
+    struct slice *s = slice(compare, print);
+    slice_resize(s, (u64) ((double) num_keys * 1.5));
+    for (int i = 0; i < 5; i++) {
+        void *buf = malloc(key_size);
+        memcpy(buf, keys + i * key_size, key_size);
+        s->keys[i] = buf;
+    }
+    s->length = num_keys;
+    return s;
 }
 
 void slice_join(struct slice *s1, struct slice *s2) {
@@ -211,4 +233,8 @@ void slice_sort(struct slice *s) {
 
 void slice_to_array(struct slice *s, void **array, u64 array_length) {
     memcpy(array, s->keys, sizeof(void *) * array_length);
+}
+
+void slice_to_primitive_array(struct slice *s, void *array, u64 array_length, size_t key_size) {
+    for (int i = 0; i < s->length; i++) memcpy(array + i * key_size, s->keys[i], key_size);
 }

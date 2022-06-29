@@ -46,12 +46,16 @@ void slice_insert_index(struct slice *s, void *key, u64 index);
 void *slice_delete_index(struct slice *s, u64 index);
 void slice_set_index(struct slice *s, void *key, u64 index);
 void *slice_get_index(struct slice *s, u64 index);
-void slice_from_array(struct slice *s, void **keys, u64 num_keys);
 void slice_join(struct slice *s1, struct slice *s2);
+void slice_print(struct slice *s);
 void slice_print(struct slice *s);
 void slice_sort(struct slice *s);
 void slice_to_array(struct slice *s, void **array, u64 array_length);
+void slice_to_primitive_array(struct slice *s, void *array, u64 array_length, size_t key_size);
 struct slice *slice(slice_cmpfunc compare, printfunc print);
 struct slice *subslice(struct slice *s, u64 start, u64 end);
+struct slice *slice_from_array(slice_cmpfunc compare, printfunc print, void **keys, u64 num_keys);
+struct slice *
+slice_from_primitive_array(slice_cmpfunc compare, printfunc print, void *keys, u64 num_keys, size_t key_size);
 
 #endif

@@ -8,11 +8,11 @@
 #include "index.h"
 #include "stringbuilder.h"
 
-struct bloodborne_character {
+typedef struct bloodborne_character {
     char name[50], location[100];
     u32  num_phases;
     u64  blood_echoes;
-};
+} b_char;
 
 // lol
 struct bloodborne_character *bbc(char *name, char *location, u32 num_phases, u64 blood_echoes) {
@@ -32,7 +32,21 @@ static void print_u64(const void *el) {
     printf("%llu ", *(u64 *) el);
 }
 
+static void print_character(const void *character) {
+    printf("%s ", (*(struct bloodborne_character *) character).name);
+}
+
+static int compare_character(const void *first, const void *second) {
+    return (int) ((*(struct bloodborne_character *) first).blood_echoes -
+                  (*(struct bloodborne_character *) second).blood_echoes);
+}
 
 int main() {
+    format_index("/Users/anishsinha/Home/scratch/lock-table-final/test_database/test_index.bin",
+                 "bloodborne_characters", sizeof(b_char));
+    struct b_link_entry test_entry = {
+            .id=613, .loc=0
+    };
+    b_link_insert("/Users/anishsinha/Home/scratch/lock-table-final/test_database/test_index.bin", &test_entry);
     return 0;
 }
