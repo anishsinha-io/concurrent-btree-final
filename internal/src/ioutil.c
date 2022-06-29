@@ -23,40 +23,11 @@ struct buffer_pool *buffer_pool(allocator page_allocator) {
     return pool;
 }
 
-static const char *build_table_path(const char *table_name) {
-    char *path = malloc(strlen(TABLE_PATH) + strlen(table_name) + strlen(".bin"));
-    strncpy(path, TABLE_PATH, strlen(TABLE_PATH));
-    strncat(path, table_name, strlen(table_name));
-    strncat(path, ".bin", strlen(".bin"));
-    return path;
-}
-
-static const char *build_index_path(const char *table_name) {
-    char *path = malloc(strlen(INDEX_PATH) + strlen(table_name) + strlen("_index.bin"));
-    strncpy(path, INDEX_PATH, strlen(INDEX_PATH));
-    strncat(path, table_name, strlen(table_name));
-    strncat(path, "_index.bin", strlen("_index.bin"));
-    return path;
-}
-
-i32 format_table(const char *table_name, const void *header, size_t header_size) {
-    if (!table_name || !header || header_size < 0) return EINVAL;
-    const char *table_path = build_table_path(table_name);
-    i32        fd          = open(table_path, O_RDWR);
-    if (fd < 0 && errno == ENOENT) fd = open(table_path, O_CREAT | O_EXCL | O_WRONLY);
-    else truncate(table_path, 0);
-    pwrite(fd, header, header_size, 0);
-    close(fd);
-    return 0;
-}
-
-i32 format_index(const char *table_name, const void *header, size_t header_size) {
-    if (!table_name || !header || header_size < 0) return EINVAL;
-    const char *index_path = build_index_path(table_name);
-    i32        fd          = open(index_path, O_RDWR);
-    if (fd < 0 && errno == ENOENT) fd = open(index_path, O_CREAT | O_EXCL | O_WRONLY);
-    else truncate(index_path, 0);
-    pwrite(fd, header, header_size, 0);
+i32 write_buffer(const char *path, const void *buf, size_t buf_size, off_t offset) {
+    if (!path || !buf || buf_size < 0) return EINVAL;
+    i32 fd = open(path, O_WRONLY);
+    if (fd < 0) return errno;
+    pwrite(fd, buf, buf_size, offset);
     close(fd);
     return 0;
 }

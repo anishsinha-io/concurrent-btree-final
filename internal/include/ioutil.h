@@ -57,5 +57,6 @@ struct buffer_pool {
 };
 
 struct buffer_pool *buffer_pool(allocator page_allocator);
+i32 write_buffer(const char *path, const void *buf, size_t buf_size, off_t offset);
 
 #endif

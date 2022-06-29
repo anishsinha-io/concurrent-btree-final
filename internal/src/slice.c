@@ -148,7 +148,7 @@ void slice_join(struct slice *s1, struct slice *s2) {
 }
 
 u64 slice_find_index(const struct slice *s, const void *key) {
-    u64 start = 0, end = s->length - 1;
+    i64 start = 0, end = s->length - 1;
     while (start <= end) {
         u64 mid = (start + end) / 2;
         if (s->compare(s->keys[mid], key) == 0) return mid;

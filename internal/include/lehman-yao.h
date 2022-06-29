@@ -25,5 +25,27 @@
 #include "stack.h"
 #include "errors.h"
 #include "global.h"
+#include "defaults.h"
+
+struct b_link_header {
+    char   table_name[50];
+    u64    node_ct;
+    i64    height;
+    size_t node_size;
+};
+
+struct b_link_node {
+    bool         leaf;
+    u64          order;
+    struct slice *keys, *children;
+};
+
+struct node_entry {
+    u64 id, loc;
+};
+
+struct b_link_header *b_link_header(char *table_name, size_t node_size);
+struct b_link_node *b_link_node(bool leaf, u64 min_order);
+const char *b_link_header_to_string(struct b_link_header *header);
 
 #endif
