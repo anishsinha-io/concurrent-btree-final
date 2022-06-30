@@ -41,7 +41,6 @@ i32 read_index_page(const char *path, u64 loc, struct b_link_node *buf) {
     status = read_index_header(path, &header);
     if (status != 0) err_abort(status, "unable to read index header into memory");
     if ((i64) loc - 1 > (i64) header.node_ct) return EINVAL;
-
     off_t offset = (off_t) (sizeof(struct b_link_node) * loc + sizeof(header));
     i32   fd     = open(path, O_RDONLY);
     pread(fd, buf, sizeof(*buf), offset);
@@ -56,21 +55,6 @@ static int compare_u64(const void *first, const void *second) {
 
 static void print_u64(const void *el) {
     printf("%llu\n", *(u64 *) el);
-}
-
-static i32 read_root(const char *path, struct b_link_node *buf) {
-    i32                  status;
-    struct b_link_header header;
-    if (!path || !buf) return EINVAL;
-    status = read_index_header(path, &header);
-    if (status != 0) err_abort(status, "unable to read index header into memory");
-    // the offset here means the size of the index header + the location of the root multiplied by the size of each
-    // index page (each of which is one logical node)
-    off_t offset = (off_t) (sizeof(header) + header.root_loc * sizeof(struct b_link_node));
-    i32   fd     = open(path, O_RDONLY);
-    if (fd < 0) return EBADF;
-    pread(fd, buf, sizeof(struct b_link_node), offset);
-    return 0;
 }
 
 #define NODE_KEYS(node) slice_from_primitive_array(compare_u64, print_u64, (node)->keys, (node)->num_keys, sizeof(u64))
