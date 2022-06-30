@@ -238,3 +238,15 @@ void slice_to_array(struct slice *s, void **array, u64 array_length) {
 void slice_to_primitive_array(struct slice *s, void *array, u64 array_length, size_t key_size) {
     for (int i = 0; i < s->length; i++) memcpy(array + i * key_size, s->keys[i], key_size);
 }
+
+i64 slice_search(struct slice *s, const void *key, u64 start, u64 end) {
+    if (!s || !key || s->length == 0) return -1;
+    u64 mid = (start + end) / 2;
+    if (start == mid) {
+        if (s->compare(s->keys[mid], key) == 0) return (i64) start;
+        return -1;
+    }
+    if (s->compare(s->keys[mid], key) == 0) return (i64) mid;
+    else if (s->compare(s->keys[mid], key) > 0) return slice_search(s, key, 0, mid);
+    return slice_search(s, key, mid, end);
+}

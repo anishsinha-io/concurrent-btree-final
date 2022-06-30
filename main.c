@@ -20,7 +20,8 @@ struct bloodborne_character *bbc(char *name, char *location, u32 num_phases, u64
     struct bloodborne_character *bbc = malloc(sizeof(*bbc));
     strncpy(bbc->name, name, sizeof(bbc->name));
     strncpy(bbc->location, location, sizeof(bbc->location));
-    bbc->num_phases = num_phases;
+    bbc->num_phases   = num_phases;
+    bbc->blood_echoes = blood_echoes;
     return bbc;
 }
 

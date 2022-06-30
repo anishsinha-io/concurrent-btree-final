@@ -41,6 +41,8 @@ const char *b_link_node_to_string(struct b_link_node *node) {
     sb->appendlong(sb, (long long) node->num_keys);
     sb->appendstring(sb, "\n\thigh_key: ");
     sb->appendlong(sb, (long long) node->high_key);
+    sb->appendstring(sb, "\n\tloc: ");
+    sb->appendlong(sb, node->loc);
     sb->appendstring(sb, "\n\tnext_loc: ");
     sb->appendlong(sb, node->next_loc);
     sb->appendstring(sb, "\n\tkeys: [");
@@ -71,31 +73,11 @@ const char *b_link_node_to_string(struct b_link_node *node) {
 }
 
 
-struct b_link_node *b_link_node(bool leaf, u64 min_order) {
+struct b_link_node *b_link_node(u64 min_order) {
     struct b_link_node *node = malloc(sizeof(struct b_link_node));
     node->order    = min_order;
-    node->leaf     = leaf;
-    node->high_key = INFINITY;
-    node->next_loc = -1;
+    node->leaf     = true;
+    node->high_key = -1;
+    node->next_loc = node->loc = -1;
     return node;
 }
-
-// this is the base case
-// static i32 insert_key_safe(struct b_link_node *node, struct b_link_entry *entry) {
-//     if (!node || !entry) return EINVAL;
-//     if (node->leaf) {
-//         struct slice *node_keys     = slice_from_primitive_array(compare_u64, print_u64, node->keys, node->num_keys,
-//                                                                  sizeof(u64));
-//         struct slice *node_children = slice_from_primitive_array(compare_u64, print_u64, node->children,
-//                                                                  node->num_keys + 1,
-//                                                                  sizeof(u64));
-//         u64          index          = slice_find_index(node_keys, &entry->id);
-//         slice_insert_index(node_keys, &entry->id, index);
-//         slice_insert_index(node_children, &entry->loc, index);
-//         slice_to_primitive_array(node_keys, node->keys, 2 * TEST_ORDER, sizeof(u64));
-//         slice_to_primitive_array(node_children, node->children, 1 + 2 * TEST_ORDER, sizeof(u64));
-//     }
-//     return 0;
-// }
-//
-//

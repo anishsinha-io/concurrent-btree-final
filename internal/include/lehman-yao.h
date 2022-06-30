@@ -40,16 +40,15 @@ struct b_link_entry {
 };
 
 struct b_link_node {
-    bool leaf;
-    u64  id, order, num_keys, high_key;
-    i64  next_loc;
-    u64  keys[TEST_ORDER * 2];
-    u64  children[1 + TEST_ORDER * 2];
+    u64 id, order, num_keys, high_key, leaf;
+    i64 next_loc, loc;
+    u64 keys[TEST_ORDER * 2];
+    u64 children[1 + TEST_ORDER * 2];
 };
 
 
 struct b_link_header *b_link_header(char *table_name, size_t node_size);
-struct b_link_node *b_link_node(bool leaf, u64 min_order);
+struct b_link_node *b_link_node(u64 min_order);
 const char *b_link_header_to_string(struct b_link_header *header);
 const char *b_link_node_to_string(struct b_link_node *node);
 

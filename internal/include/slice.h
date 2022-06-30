@@ -36,8 +36,9 @@ struct slice {
     printfunc     print;
 };
 
-u64 slice_find_index(const struct slice *s, const void *key);
 u64 slice_len(const struct slice *s);
+u64 slice_find_index(const struct slice *s, const void *key);
+i64 slice_search(struct slice *s, const void *key, u64 start, u64 end);
 void slice_insert_front(struct slice *s, void *key);
 void slice_insert_back(struct slice *s, void *key);
 void *slice_delete_front(struct slice *s);
@@ -47,7 +48,6 @@ void *slice_delete_index(struct slice *s, u64 index);
 void slice_set_index(struct slice *s, void *key, u64 index);
 void *slice_get_index(struct slice *s, u64 index);
 void slice_join(struct slice *s1, struct slice *s2);
-void slice_print(struct slice *s);
 void slice_print(struct slice *s);
 void slice_sort(struct slice *s);
 void slice_to_array(struct slice *s, void **array, u64 array_length);
